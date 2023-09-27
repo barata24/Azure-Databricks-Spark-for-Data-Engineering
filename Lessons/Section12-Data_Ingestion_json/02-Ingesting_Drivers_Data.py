@@ -1,4 +1,17 @@
 # Databricks notebook source
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/02-Common_Functions"
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##01-Ingesting_Drivers_Data
 
@@ -36,7 +49,7 @@ drivers_schema = StructType(fields=[ \
 
 drivers_df = spark.read \
                   .schema(drivers_schema) \
-                  .json("/mnt/formula1dl092023/raw/drivers.json")
+                  .json(f"{raw_folder_path}/drivers.json")
 
 # COMMAND ----------
 
@@ -64,7 +77,20 @@ drivers_df = drivers_df.drop("url")
 
 # COMMAND ----------
 
+drivers_df = add_ingestion_date(drivers_df)
+
+# COMMAND ----------
+
 drivers_df = drivers_df.withColumn("name", concat("name.forename", lit(" "), "name.surname"))
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ####Adding new column from widget
+
+# COMMAND ----------
+
+drivers_df = drivers_df.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
@@ -76,7 +102,7 @@ display(drivers_df)
 
 # COMMAND ----------
 
-drivers_df.write.mode("overwrite").parquet("/mnt/formula1dl092023/processed/drivers")
+drivers_df.write.mode("overwrite").parquet(f"{processed_folder_path}/drivers")
 
 # COMMAND ----------
 

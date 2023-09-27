@@ -1,4 +1,17 @@
 # Databricks notebook source
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/02-Common_Functions"
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##01-Ingesting_Constructors_Data
 
@@ -10,7 +23,7 @@
 # COMMAND ----------
 
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
-from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import current_timestamp, lit
 
 # COMMAND ----------
 
@@ -36,7 +49,7 @@ constructors_schema = StructType(fields=[ \
 
 constructors_df = spark.read \
                        .schema(constructors_schema) \
-                       .json("/mnt/formula1dl092023/raw/constructors.json")
+                       .json(f"{raw_folder_path}/constructors.json")
 
 # COMMAND ----------
 
@@ -64,7 +77,16 @@ constructors_df = constructors_df.drop("url")
 
 # COMMAND ----------
 
-constructors_df = constructors_df.withColumn("ingestion_date", current_timestamp())
+constructors_df = add_ingestion_date(constructors_df)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ####Adding new column from widget
+
+# COMMAND ----------
+
+constructors_df = constructors_df.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
@@ -72,4 +94,4 @@ display(constructors_df)
 
 # COMMAND ----------
 
-constructors_df.write.mode("overwrite").parquet("/mnt/formula1dl092023/processed/constructors")
+constructors_df.write.mode("overwrite").parquet(f"{processed_folder_path}/constructors")

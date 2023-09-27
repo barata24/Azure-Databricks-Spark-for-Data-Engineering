@@ -1,4 +1,17 @@
 # Databricks notebook source
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/02-Common_Functions"
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##01-Ingesting_Laptimes_Data
 
@@ -10,7 +23,7 @@
 # COMMAND ----------
 
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
-from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import current_timestamp, lit
 
 # COMMAND ----------
 
@@ -32,7 +45,7 @@ laptimes_schema = StructType(fields=[ \
 
 laptimes_df = spark.read \
                    .schema(laptimes_schema) \
-                   .csv("/mnt/formula1dl092023/raw/lap_times/lap_times_split*.csv")
+                   .csv(f"{raw_folder_path}/lap_times/lap_times_split*.csv")
 
 # COMMAND ----------
 
@@ -59,7 +72,20 @@ laptimes_df = laptimes_df.withColumnRenamed("raceId", "race_id") \
 
 # COMMAND ----------
 
-laptimes_df = laptimes_df.withColumn("ingestion_date", current_timestamp())
+laptimes_df = add_ingestion_date(laptimes_df)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ####Adding new column from widget
+
+# COMMAND ----------
+
+laptimes_df = laptimes_df.withColumn("data_source", lit(v_data_source))
+
+# COMMAND ----------
+
+display(laptimes_df)
 
 # COMMAND ----------
 
@@ -68,8 +94,8 @@ laptimes_df = laptimes_df.withColumn("ingestion_date", current_timestamp())
 
 # COMMAND ----------
 
-laptimes_df.write.mode("overwrite").parquet("/mnt/formula1dl092023/lap_times")
+laptimes_df.write.mode("overwrite").parquet(f"{processed_folder_path}/lap_times")
 
 # COMMAND ----------
 
-display(spark.read.parquet("/mnt/formula1dl092023/lap_times"))
+display(spark.read.parquet("/mnt/formula1dl092023/processed/lap_times"))

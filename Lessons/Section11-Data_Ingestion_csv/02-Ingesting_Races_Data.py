@@ -1,4 +1,17 @@
 # Databricks notebook source
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/02-Common_Functions"
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##02-Ingesting_Races_Data
 
@@ -30,7 +43,7 @@ races_schema = StructType(fields=[ \
 races_df = spark.read \
                 .option("header", True) \
                 .schema(races_schema) \
-                .csv("/mnt/formula1dl092023/raw/races.csv")
+                .csv(f"{raw_folder_path}/races.csv")
 
 
 # COMMAND ----------
@@ -68,12 +81,20 @@ races_df = races_df.drop("url")
 
 # COMMAND ----------
 
-races_df = races_df.withColumn("ingestion_date", current_timestamp()) \
-                   .withColumn("race_timestamp", to_timestamp(concat(races_df.date, lit(" "), races_df.time), "yyyy-MM-dd HH:mm:ss"))
+races_df = add_ingestion_date(races_df)
 
 # COMMAND ----------
 
-display(races_df)
+races_df = races_df.withColumn("race_timestamp", to_timestamp(concat(races_df.date, lit(" "), races_df.time), "yyyy-MM-dd HH:mm:ss"))
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ####Adding new column from widget
+
+# COMMAND ----------
+
+races_df = races_df.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
@@ -82,7 +103,7 @@ display(races_df)
 
 # COMMAND ----------
 
-races_df.write.mode("overwrite").partitionBy("race_year").parquet("/mnt/formula1dl092023/processed/races")
+races_df.write.mode("overwrite").partitionBy("race_year").parquet(f"{processed_folder_path}/races")
 
 # COMMAND ----------
 

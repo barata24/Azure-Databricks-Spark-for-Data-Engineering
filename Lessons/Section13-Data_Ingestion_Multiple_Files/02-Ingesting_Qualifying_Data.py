@@ -1,4 +1,17 @@
 # Databricks notebook source
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/02-Common_Functions"
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##02-Ingesting_Qualifying_Data
 
@@ -10,7 +23,7 @@
 # COMMAND ----------
 
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
-from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import current_timestamp, lit
 
 # COMMAND ----------
 
@@ -36,7 +49,7 @@ qualifying_schema = StructType(fields=[ \
 qualifying_df = spark.read \
                    .schema(qualifying_schema) \
                    .option("multiLine", True) \
-                   .json("/mnt/formula1dl092023/raw/qualifying/qualifying_split_*.json")
+                   .json(f"{raw_folder_path}/qualifying/qualifying_split_*.json")
 
 # COMMAND ----------
 
@@ -64,7 +77,16 @@ qualifying_df = qualifying_df.withColumnRenamed("qualifyId", "qualify_id") \
 
 # COMMAND ----------
 
-qualifying_df = qualifying_df.withColumn("ingestion_date", current_timestamp())
+qualifying_df = add_ingestion_date(qualifying_df)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ####Adding new column from widget
+
+# COMMAND ----------
+
+qualifying_df = qualifying_df.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
@@ -73,8 +95,8 @@ qualifying_df = qualifying_df.withColumn("ingestion_date", current_timestamp())
 
 # COMMAND ----------
 
-qualifying_df.write.mode("overwrite").parquet("/mnt/formula1dl092023/qualifying")
+qualifying_df.write.mode("overwrite").parquet(f"{processed_folder_path}/qualifying")
 
 # COMMAND ----------
 
-display(spark.read.parquet("/mnt/formula1dl092023/qualifying"))
+display(spark.read.parquet("/mnt/formula1dl092023/processed/qualifying"))

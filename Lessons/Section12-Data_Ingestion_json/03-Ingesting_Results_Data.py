@@ -1,11 +1,24 @@
 # Databricks notebook source
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/02-Common_Functions"
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##03-Ingesting_Results_Data
 
 # COMMAND ----------
 
 from pyspark.sql.types     import StructType, StructField, IntegerType, FloatType, StringType, DataType
-from pyspark.sql.functions import current_timestamp 
+from pyspark.sql.functions import current_timestamp, lit
 
 # COMMAND ----------
 
@@ -27,12 +40,12 @@ results_schema = StructType(fields=[
     StructField("points",          FloatType(),   True), \
     StructField("laps",            IntegerType(), True), \
     StructField("time",            StringType(),  True), \
-    StructField("miliseconds",     IntegerType(), True), \
+    StructField("milliseconds",    IntegerType(), True), \
     StructField("fastestLap",      IntegerType(), True), \
     StructField("rank",            IntegerType(), True), \
     StructField("fastestLapTime",  StringType(),  True), \
-    StructField("fastestLapSpeed", StringType(),  True), \
-    StructField("statusId",        IntegerType(), True) \
+    StructField("fastestLapSpeed", FloatType(),   True), \
+    StructField("statusId",        StringType(),  True)  \
 ])
 
 # COMMAND ----------
@@ -44,7 +57,7 @@ results_schema = StructType(fields=[
 
 results_df = spark.read \
                   .schema(results_schema) \
-                  .json("/mnt/formula1dl092023/raw/results.json")
+                  .json(f"{raw_folder_path}/results.json")
 
 # COMMAND ----------
 
@@ -66,11 +79,20 @@ results_df = results_df.withColumnRenamed("resultId",        "result_id") \
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ####New col
+# MAGIC ####Adding col
 
 # COMMAND ----------
 
-results_df = results_df.withColumn("ingestion_date", current_timestamp())
+results_df = add_ingestion_date(results_df)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ####Adding new column from widget
+
+# COMMAND ----------
+
+results_df = results_df.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
@@ -88,7 +110,7 @@ results_df = results_df.drop("statusId")
 
 # COMMAND ----------
 
-results_df.write.mode("overwrite").partitionBy("race_id").parquet("/mnt/formula1dl092023/processed/results")
+results_df.write.mode("overwrite").partitionBy("race_id").parquet(f"{processed_folder_path}/results")
 
 # COMMAND ----------
 

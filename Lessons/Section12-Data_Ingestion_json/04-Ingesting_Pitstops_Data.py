@@ -1,4 +1,17 @@
 # Databricks notebook source
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
+
+# COMMAND ----------
+
+# MAGIC %run "../Section14-Databricks_Workflows/02-Common_Functions"
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ####04-Ingesting_Pitstops_Data
 
@@ -10,7 +23,7 @@
 # COMMAND ----------
 
 from pyspark.sql.types     import StructType, StructField, IntegerType, StringType
-from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import current_timestamp, lit
 
 # COMMAND ----------
 
@@ -34,7 +47,7 @@ pitstops_schema = StructType(fields=[ \
 pitstops_df = spark.read \
                    .schema(pitstops_schema) \
                    .option("multiLine", True) \
-                   .json("/mnt/formula1dl092023/raw/pit_stops.json")
+                   .json(f"{raw_folder_path}/pit_stops.json")
 
 # COMMAND ----------
 
@@ -57,7 +70,16 @@ pitstops_df = pitstops_df.withColumnRenamed("raceId", "race_id") \
 
 # COMMAND ----------
 
-pitstops_df = pitstops_df.withColumn("ingestion_date", current_timestamp())
+pitstops_df = add_ingestion_date(pitstops_df)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ####Adding new column from widget
+
+# COMMAND ----------
+
+pitstops_df = pitstops_df.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
@@ -66,4 +88,4 @@ pitstops_df = pitstops_df.withColumn("ingestion_date", current_timestamp())
 
 # COMMAND ----------
 
-pitstops_df.write.mode("overwrite").parquet("/mnt/formula1dl092023/processed/pit_stops")
+pitstops_df.write.mode("overwrite").parquet(f"{processed_folder_path}/pit_stops")
