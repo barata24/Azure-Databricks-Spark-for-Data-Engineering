@@ -89,3 +89,7 @@ pitstops_df = pitstops_df.withColumn("data_source", lit(v_data_source))
 # COMMAND ----------
 
 pitstops_df.write.mode("overwrite").parquet(f"{processed_folder_path}/pit_stops")
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

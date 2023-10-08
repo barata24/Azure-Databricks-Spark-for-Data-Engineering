@@ -95,3 +95,7 @@ display(constructors_df)
 # COMMAND ----------
 
 constructors_df.write.mode("overwrite").parquet(f"{processed_folder_path}/constructors")
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

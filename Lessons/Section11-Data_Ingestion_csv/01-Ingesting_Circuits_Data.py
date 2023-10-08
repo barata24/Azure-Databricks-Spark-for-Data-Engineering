@@ -69,8 +69,8 @@ display(circuits_df.describe())
 
 # COMMAND ----------
 
-circuits_df = circuits_df.withColumnRenamed("circuitsId", "circuit_id") \
-                       .withColumnRenamed("circuitRed", "circuit_ref") \
+circuits_df = circuits_df.withColumnRenamed("circuitId", "circuit_id") \
+                       .withColumnRenamed("circuitRef", "circuit_ref") \
                        .withColumnRenamed("lat", "latitude") \
                        .withColumnRenamed("long", "longitude")
 
@@ -147,3 +147,7 @@ display(dbutils.fs.ls("/mnt/formula1dl092023/processed/circuits"))
 # COMMAND ----------
 
 display(spark.read.parquet("/mnt/formula1dl092023/processed/circuits"))
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

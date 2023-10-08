@@ -115,3 +115,7 @@ results_df.write.mode("overwrite").partitionBy("race_id").parquet(f"{processed_f
 # COMMAND ----------
 
 display(spark.read.parquet("/mnt/formula1dl092023/processed/results"))
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

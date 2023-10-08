@@ -100,3 +100,7 @@ qualifying_df.write.mode("overwrite").parquet(f"{processed_folder_path}/qualifyi
 # COMMAND ----------
 
 display(spark.read.parquet("/mnt/formula1dl092023/processed/qualifying"))
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

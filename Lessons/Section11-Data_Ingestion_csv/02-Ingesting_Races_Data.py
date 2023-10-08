@@ -112,3 +112,7 @@ display(dbutils.fs.ls("/mnt/formula1dl092023/processed/"))
 # COMMAND ----------
 
 display(spark.read.parquet("/mnt/formula1dl092023/processed/races"))
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")
