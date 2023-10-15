@@ -8,17 +8,17 @@
 # MAGIC 1. Register Azure Service Principal
 # MAGIC 2. Generate a secret for the Service Principal
 # MAGIC 3. Set Spark configs with App/Client ID, Directory/Tenant ID & Secret
-# MAGIC 4. Assign the required Role on the Data Lake for the Service Principal so that it gets access to the Data Lake
+# MAGIC 4. Assign the required Role on the Data Lake for the Service Principal so that it gets access to the Data Lake - **Done accessing ADLS IAM properties and add role assignmente as "Storage blob data contributor"**
 
 # COMMAND ----------
 
-dbutils.secrets.list("formula1-scope")
+dbutils.secrets.list("formula1dl-scope")
 
 # COMMAND ----------
 
-client_id     = dbutils.secrets.get(scope = "formula1-scope", key = "formula1dl092023-client-id")
-tenant_id     = dbutils.secrets.get(scope = "formula1-scope", key = "formula1dl092023-tenant-id")
-client_secret = dbutils.secrets.get(scope = "formula1-scope", key = "formula1dl092023-client-secret")
+client_id     = dbutils.secrets.get(scope = "formula1-scope", key = "formula1app-client-id")
+tenant_id     = dbutils.secrets.get(scope = "formula1-scope", key = "formula1app-tenant-id")
+client_secret = dbutils.secrets.get(scope = "formula1-scope", key = "formula1app-client-secret")
 
 # COMMAND ----------
 

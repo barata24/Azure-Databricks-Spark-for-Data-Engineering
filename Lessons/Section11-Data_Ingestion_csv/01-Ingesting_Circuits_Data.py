@@ -26,7 +26,7 @@ display(dbutils.fs.mounts())
 
 # COMMAND ----------
 
-display(dbutils.fs.ls("/mnt/formula1dl092023/raw"))
+display(dbutils.fs.ls("/mnt/formula1dl102023/raw"))
 
 # COMMAND ----------
 
@@ -138,15 +138,15 @@ circuits_df.write.mode("overwrite").parquet(f"{processed_folder_path}/circuits")
 # COMMAND ----------
 
 # MAGIC %fs
-# MAGIC ls /mnt/formula1dl092023/processed/circuits
+# MAGIC ls /mnt/formula1dl102023/processed/circuits
 
 # COMMAND ----------
 
-display(dbutils.fs.ls("/mnt/formula1dl092023/processed/circuits"))
+display(dbutils.fs.ls("/mnt/formula1dl102023/processed/circuits"))
 
 # COMMAND ----------
 
-display(spark.read.parquet("/mnt/formula1dl092023/processed/circuits"))
+display(spark.read.parquet("/mnt/formula1dl102023/processed/circuits"))
 
 # COMMAND ----------
 

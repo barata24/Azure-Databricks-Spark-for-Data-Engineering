@@ -107,11 +107,11 @@ races_df.write.mode("overwrite").partitionBy("race_year").parquet(f"{processed_f
 
 # COMMAND ----------
 
-display(dbutils.fs.ls("/mnt/formula1dl092023/processed/"))
+display(dbutils.fs.ls("/mnt/formula1dl102023/processed/"))
 
 # COMMAND ----------
 
-display(spark.read.parquet("/mnt/formula1dl092023/processed/races"))
+display(spark.read.parquet("/mnt/formula1dl102023/processed/races"))
 
 # COMMAND ----------
 

@@ -21,22 +21,24 @@
 
 # COMMAND ----------
 
-dbutils.secrets.list(scope = "formula1-scope")
+dbutils.secrets.list(scope = "formula1dl-scope")
 
 # COMMAND ----------
 
-client_id     = dbutils.secrets.get(scope = "formula1-scope", key = "formula1dl092023-client-id")
-tenant_id     = dbutils.secrets.get(scope = "formula1-scope", key = "formula1dl092023-tenant-id")
-client_secret = dbutils.secrets.get(scope = "formula1-scope", key = "formula1dl092023-client-secret")
+client_id     = dbutils.secrets.get(scope = "formula1dl-scope", key = "formula1app-client-id")
+tenant_id     = dbutils.secrets.get(scope = "formula1dl-scope", key = "formula1app-tenant-id")
+client_secret = dbutils.secrets.get(scope = "formula1dl-scope", key = "formula1app-client-secret")
 
 # COMMAND ----------
 
 #With the cell below this code is no longer needed.
-""" spark.conf.set("fs.azure.account.auth.type.formula1dl092023.dfs.core.windows.net", "OAuth")
+""" 
+spark.conf.set("fs.azure.account.auth.type.formula1dl092023.dfs.core.windows.net", "OAuth")
 spark.conf.set("fs.azure.account.oauth.provider.type.formula1dl092023.dfs.core.windows.net", "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
 spark.conf.set("fs.azure.account.oauth2.client.id.formula1dl092023.dfs.core.windows.net", client_id)
 spark.conf.set("fs.azure.account.oauth2.client.secret.formula1dl092023.dfs.core.windows.net", client_secret)
-spark.conf.set("fs.azure.account.oauth2.client.endpoint.formula1dl092023.dfs.core.windows.net", f"https://login.microsoftonline.com/{tenant_id}/oauth2/token") """
+spark.conf.set("fs.azure.account.oauth2.client.endpoint.formula1dl092023.dfs.core.windows.net", f"https://login.microsoftonline.com/{tenant_id}/oauth2/token")
+"""
 
 # COMMAND ----------
 
@@ -50,8 +52,8 @@ configs = {"fs.azure.account.auth.type": "OAuth",
 # COMMAND ----------
 
 dbutils.fs.mount(
-    source        = "abfss://demo@formula1dl092023.dfs.core.windows.net",
-    mount_point   = "/mnt/formula1dl092023/demo",
+    source        = "abfss://demo@formula1dl102023.dfs.core.windows.net",
+    mount_point   = "/mnt/formula1dl102023/demo",
     extra_configs = configs
 )
 
@@ -60,12 +62,12 @@ dbutils.fs.mount(
 # Since we've done a mounting point for this container, we no longer need to specify the actual path below.
 # Instead we can use directly the mounting point
 
-#display(dbutils.fs.ls("abfss:/demo@formula1dl092023.dfs.core.windows.net"))
-display(dbutils.fs.ls("/mnt/formula1dl092023/demo"))
+#display(dbutils.fs.ls("abfss:/demo@formula1dl102023.dfs.core.windows.net"))
+display(dbutils.fs.ls("/mnt/formula1dl102023/demo"))
 
 # COMMAND ----------
 
-display(spark.read.csv("/mnt/formula1dl092023/demo/circuits.csv"))
+display(spark.read.csv("/mnt/formula1dl102023/demo/circuits.csv"))
 
 # COMMAND ----------
 
@@ -78,4 +80,8 @@ display(dbutils.fs.mounts())
 
 # COMMAND ----------
 
-dbutils.fs.unmount("/mnt/formula1dl092023/demo")
+dbutils.fs.unmount("/mnt/formula1dl102023/demo")
+
+# COMMAND ----------
+
+

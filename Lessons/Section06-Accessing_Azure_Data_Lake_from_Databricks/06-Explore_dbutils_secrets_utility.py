@@ -12,11 +12,11 @@ dbutils.secrets.listScopes()
 
 # COMMAND ----------
 
-dbutils.secrets.list(scope="formula1-scope")
+dbutils.secrets.list(scope="formula1dl-scope")
 
 # COMMAND ----------
 
-dbutils.secrets.get(scope = "formula1-scope", key = "formula1dl092023-account-key")
+dbutils.secrets.get(scope = "formula1dl-scope", key = "formula1dl092023-account-key")
 
 # COMMAND ----------
 

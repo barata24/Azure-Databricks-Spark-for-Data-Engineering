@@ -21,11 +21,11 @@ dbutils.secrets.listScopes()
 
 # COMMAND ----------
 
-dbutils.secrets.list("formula1-scope")
+dbutils.secrets.list("formula1dl-scope")
 
 # COMMAND ----------
 
-formula1dl_SAS_Token = dbutils.secrets.get(scope = "formula1-scope", key = "formula1dl092023-sastoken")
+formula1dl_SAS_Token = dbutils.secrets.get(scope = "formula1dl-scope", key = "formula1dl092023-sastoken")
 
 # COMMAND ----------
 

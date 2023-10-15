@@ -98,7 +98,7 @@ laptimes_df.write.mode("overwrite").parquet(f"{processed_folder_path}/lap_times"
 
 # COMMAND ----------
 
-display(spark.read.parquet("/mnt/formula1dl092023/processed/lap_times"))
+display(spark.read.parquet("/mnt/formula1dl102023/processed/lap_times"))
 
 # COMMAND ----------
 
