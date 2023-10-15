@@ -28,10 +28,11 @@ display(abu_dhabi_race)
 
 # COMMAND ----------
 
-abu_dhabi_race_result = abu_dhabi_race.join(results_df, abu_dhabi_race.race_id == results_df.race_id, "inner") \
-                                      .select(abu_dhabi_race.race_id, abu_dhabi_race.race_name, abu_dhabi_race.race_year, abu_dhabi_race.date, abu_dhabi_race.circuit_id, \
-                                              results_df.result_id, results_df.driver_id, results_df.constructor_id, results_df.number,                                   \
-                                              results_df.grid, results_df.points, results_df.time, results_df.fastest_lap_time                                            \
+abu_dhabi_race_result = abu_dhabi_race.join(results_df, abu_dhabi_race.race_id == results_df.race_id, "inner")                         \
+                                      .select(abu_dhabi_race.race_id, abu_dhabi_race.race_name, abu_dhabi_race.race_year, abu_dhabi_race.date, 
+                                              abu_dhabi_race.circuit_id,                                                                \
+                                              results_df.result_id, results_df.driver_id, results_df.constructor_id, results_df.number, \
+                                              results_df.grid, results_df.points, results_df.time, results_df.fastest_lap_time, results_df.position \
                                               )
 display(abu_dhabi_race_result)
 
@@ -52,7 +53,7 @@ display(abu_dhabi_race_result_drivers_constructor)
 final_df = abu_dhabi_race_result_drivers_constructor.join(circuits_df, abu_dhabi_race_result_drivers_constructor.circuit_id == circuits_df.circuit_id, "inner") \
                                                     .select(abu_dhabi_race_result_drivers_constructor["*"], circuits_df.name.alias("circuit_name"))
 final_df = final_df.select(
-    final_df.race_year, final_df.race_name, final_df.circuit_name, final_df.date, final_df.nationality, final_df.driver_name, final_df.number, final_df.team_name, final_df.grid, final_df.fastest_lap_time, final_df.time, final_df.points)
+    final_df.race_year, final_df.race_name, final_df.circuit_name, final_df.date, final_df.nationality, final_df.driver_name, final_df.number, final_df.team_name, final_df.grid, final_df.fastest_lap_time, final_df.time, final_df.points, final_df.position)
 display(final_df)
 
 # COMMAND ----------
