@@ -16,10 +16,11 @@ races_results_df = spark.read.parquet(f"{presentation_folder_path}/race_results"
 
 # COMMAND ----------
 
-driver_standings_df = races_results_df                                          \
+driver_standings_df = races_results_df                                                               \
                                     .groupBy("race_year", "driver_name", "nationality", "team_name") \
-                                    .agg(_sum("points").alias("total_points"),  \
-                                         count(when(col("position") == 1, True)).alias("wins"))
+                                    .agg(_sum("points").alias("total_points"),                       \
+                                         count(when(col("position") == 1, True)).alias("wins")
+                                         )
 
 # COMMAND ----------
 
@@ -40,3 +41,7 @@ final_df         = driver_standings_df.withColumn("rank", rank().over(driver_ran
 # COMMAND ----------
 
 display(final_df.filter(col("race_year") == 2020))
+
+# COMMAND ----------
+
+final_df.write.mode("overwrite").parquet(f"{presentation_folder_path}/driver_standings")
