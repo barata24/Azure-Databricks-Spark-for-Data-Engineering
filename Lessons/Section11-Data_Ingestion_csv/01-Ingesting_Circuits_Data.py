@@ -133,7 +133,19 @@ circuits_df = circuits_df.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
-circuits_df.write.mode("overwrite").parquet(f"{processed_folder_path}/circuits")
+#Read the cell below
+#circuits_df.write.mode("overwrite").parquet(f"{processed_folder_path}/circuits")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC The cell above creates a parquet file in the ADLS, but in the context of notebook "Section18-SQL_Creating_Databases/02-SQL_Create_processed_and_presentation_databases", we're going to change a bit this command to **create a (managed) table** in the Database (mentioned in the notebook) while also writing data to parquet files.<br>
+# MAGIC Bear in mind that despite not passing the destination of an ADLS location, this information is **available in the path when the Database was created.**
+# MAGIC Being said, the new command will be presented in the cell below.
+
+# COMMAND ----------
+
+circuits_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.circuits")
 
 # COMMAND ----------
 
