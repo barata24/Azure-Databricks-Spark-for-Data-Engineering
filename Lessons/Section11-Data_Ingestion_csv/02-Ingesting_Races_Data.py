@@ -4,6 +4,11 @@ v_data_source = dbutils.widgets.get("p_data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("p_file_date", "2021-03-21")
+v_file_date = dbutils.widgets.get("p_file_date")
+
+# COMMAND ----------
+
 # MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
 
 # COMMAND ----------
@@ -43,8 +48,7 @@ races_schema = StructType(fields=[ \
 races_df = spark.read \
                 .option("header", True) \
                 .schema(races_schema) \
-                .csv(f"{raw_folder_path}/races.csv")
-
+                .csv(f"{raw_folder_path}/{v_file_date}/races.csv")
 
 # COMMAND ----------
 
@@ -85,7 +89,8 @@ races_df = add_ingestion_date(races_df)
 
 # COMMAND ----------
 
-races_df = races_df.withColumn("race_timestamp", to_timestamp(concat(races_df.date, lit(" "), races_df.time), "yyyy-MM-dd HH:mm:ss"))
+races_df = races_df.withColumn("race_timestamp", to_timestamp(concat(races_df.date, lit(" "), races_df.time), "yyyy-MM-dd HH:mm:ss")) \
+                   .withColumn("file_date", lit(v_file_date))
 
 # COMMAND ----------
 
@@ -116,6 +121,12 @@ races_df = races_df.withColumn("data_source", lit(v_data_source))
 # COMMAND ----------
 
 races_df.write.mode("overwrite").format("parquet").partitionBy("race_year").saveAsTable("f1_processed.races")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT *
+# MAGIC FROM f1_processed.races
 
 # COMMAND ----------
 

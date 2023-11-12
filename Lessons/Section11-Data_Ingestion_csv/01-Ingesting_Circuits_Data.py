@@ -4,6 +4,11 @@ v_data_source = dbutils.widgets.get("p_data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("p_file_date", "2021-03-21")
+v_file_date = dbutils.widgets.get("p_file_date")
+
+# COMMAND ----------
+
 # MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
 
 # COMMAND ----------
@@ -48,7 +53,7 @@ circuits_schema = StructType(fields=[
 circuits_df = spark.read \
                   .option("header", True) \
                   .schema(circuits_schema) \
-                  .csv(f"{raw_folder_path}/circuits.csv")
+                  .csv(f"{raw_folder_path}/{v_file_date}/circuits.csv")
 
 # COMMAND ----------
 
@@ -120,11 +125,15 @@ circuits_df = add_ingestion_date(circuits_df)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ####Adding new column from widget
+# MAGIC ####Adding new columns from widgets
 
 # COMMAND ----------
 
 circuits_df = circuits_df.withColumn("data_source", lit(v_data_source))
+
+# COMMAND ----------
+
+circuits_df = circuits_df.withColumn("file_date", lit(v_file_date))
 
 # COMMAND ----------
 
@@ -158,7 +167,7 @@ display(dbutils.fs.ls("/mnt/formula1dl102023/processed/circuits"))
 
 # COMMAND ----------
 
-display(spark.read.parquet("/mnt/formula1dl102023/processed/circuits"))
+display(spark.read.parquet(f"{processed_folder_path}/circuits"))
 
 # COMMAND ----------
 

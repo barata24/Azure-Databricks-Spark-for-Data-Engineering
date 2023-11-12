@@ -4,6 +4,11 @@ v_data_source = dbutils.widgets.get("p_data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("p_file_date", "2021-3-21")
+v_file_date = dbutils.widgets.get("p_file_date")
+
+# COMMAND ----------
+
 # MAGIC %run "../Section14-Databricks_Workflows/01-Configuration"
 
 # COMMAND ----------
@@ -49,7 +54,7 @@ drivers_schema = StructType(fields=[ \
 
 drivers_df = spark.read \
                   .schema(drivers_schema) \
-                  .json(f"{raw_folder_path}/drivers.json")
+                  .json(f"{raw_folder_path}/{v_file_date}/drivers.json")
 
 # COMMAND ----------
 
@@ -81,7 +86,8 @@ drivers_df = add_ingestion_date(drivers_df)
 
 # COMMAND ----------
 
-drivers_df = drivers_df.withColumn("name", concat("name.forename", lit(" "), "name.surname"))
+drivers_df = drivers_df.withColumn("name", concat("name.forename", lit(" "), "name.surname")) \
+                       .withColumn("file_date", v_file_date)
 
 # COMMAND ----------
 
@@ -115,6 +121,11 @@ display(drivers_df)
 # COMMAND ----------
 
 drivers_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.drivers")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT * FROM f1_processed.drivers
 
 # COMMAND ----------
 
